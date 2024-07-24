@@ -93,6 +93,14 @@ public class DiscordChatLoggerPlugin extends Plugin {
                 }
             }
         }
+        if(chatMessage.getType() == ChatMessageType.FRIENDSCHAT){
+            String friendsName = chatMessage.getSender().replaceAll("\\<.*?>", "").replaceAll("[^0-9a-zA-Z ]+", " ");
+            if (config.usefriendsChat()){
+                if((sender.equals(getPlayerName()) && config.logSelf()) || (!sender.equals(getPlayerName()) && config.logOthers())) {
+                    processFriendsChat(outputMessage, sender, friendsName);
+                }
+            }
+        }
     }
 
     private String getPlayerName()
@@ -129,7 +137,7 @@ public class DiscordChatLoggerPlugin extends Plugin {
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("payload_json", GSON.toJson(webhookBody));
 
-            buildRequestAndSend(url, requestBodyBuilder);
+        buildRequestAndSend(url, requestBodyBuilder);
     }
 
     private void processGroup(String outputText,String senderName, String groupName){
@@ -151,6 +159,38 @@ public class DiscordChatLoggerPlugin extends Plugin {
     private void sendWebhookGroup(WebhookBody webhookBody)
     {
         String configUrl = config.webhookGroup();
+        if (Strings.isNullOrEmpty(configUrl))
+        {
+            return;
+        }
+
+        HttpUrl url = HttpUrl.parse(configUrl);
+        MultipartBody.Builder requestBodyBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("payload_json", GSON.toJson(webhookBody));
+
+        buildRequestAndSend(url, requestBodyBuilder);
+    }
+
+    private void processFriendsChat(String outputText,String senderName, String friendsChatName){
+        WebhookBody webhookBody = new WebhookBody();
+        StringBuilder stringBuilder = new StringBuilder();
+        if (config.usefriendsChat())
+        {
+            stringBuilder.append("**[").append(friendsChatName).append("]** ");
+        }
+        if ((senderName.equals(getPlayerName()) && config.includeUsername()) || (!senderName.equals(getPlayerName()) && config.includeOtherUsername()))
+        {
+            stringBuilder.append("**").append(senderName).append("**").append(" : ");
+        }
+        stringBuilder.append(outputText);
+        webhookBody.setContent(stringBuilder.toString());
+        sendWebhookFriends(webhookBody);
+    }
+
+    private void sendWebhookFriends(WebhookBody webhookBody)
+    {
+        String configUrl = config.webhookFriendsChat();
         if (Strings.isNullOrEmpty(configUrl))
         {
             return;
