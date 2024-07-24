@@ -14,8 +14,6 @@ Log various chat to a discord webhook.
 
 - Log friends chat
 
-![image](https://user-images.githubusercontent.com/16944807/216733822-e7a5f7f5-154f-472d-8d5a-e9a959ec95f9.png)
-
 # Planned
 
 - Log Clan
