@@ -40,7 +40,7 @@ public interface DiscordChatLoggerConfig extends Config{
     @ConfigSection(
             name = "Group",
             description = "Options for group message logging",
-            position = 200
+            position = 300
     )
     String groupOptions = "groupOptions";
 
@@ -77,9 +77,38 @@ public interface DiscordChatLoggerConfig extends Config{
     }
 
     @ConfigSection(
+            name = "Friends Chat",
+            description = "Options for friends chat message logging",
+            position = 200
+    )
+    String friendsChatOptions = "friendsChatOptions";
+
+    @ConfigItem(
+            keyName = "usefriendsChat",
+            name = "Send friends chat Messages",
+            description = "Send friends chat messages to discord webhook",
+            position = 1,
+            section = friendsChatOptions
+    )
+    default boolean usefriendsChat()
+    {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "webhookfriendsChat",
+            name = "Webhook URL",
+            description = "Send friends chat messages to discord webhook",
+            position = 2,
+            section = friendsChatOptions
+    )
+
+    String webhookFriendsChat();
+
+    @ConfigSection(
             name = "Logging",
             description = "General options for logging",
-            position = 300
+            position = 400
     )
     String loggingOptions = "logginOptions";
 
