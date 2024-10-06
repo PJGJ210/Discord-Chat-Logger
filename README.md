@@ -1,4 +1,4 @@
-# Discord Chat Logger [![](https://img.shields.io/endpoint?url=https://i.pluginhub.info/shields/installs/plugin/discord-chat-logger)](https://runelite.net/plugin-hub)
+# Discord Chat Logger [![](https://img.shields.io/endpoint?url=https://api.runelite.net/pluginhub/shields/installs/plugin/discord-chat-logger)](https://runelite.net/plugin-hub)
 
 Log various chat to a discord webhook.
 
