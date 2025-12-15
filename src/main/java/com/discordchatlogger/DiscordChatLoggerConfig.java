@@ -17,7 +17,7 @@ public interface DiscordChatLoggerConfig extends Config{
     String privateOptions = "privateOptions";
 
     @ConfigItem(
-            keyName = "logPrivateChat",
+            keyName = "useprivate",
             name = "Log Private Messages",
             description = "Send private messages to discord webhook",
             position = 1,
@@ -45,7 +45,7 @@ public interface DiscordChatLoggerConfig extends Config{
     String groupOptions = "groupOptions";
 
     @ConfigItem(
-            keyName = "logGroupChat",
+            keyName = "usegroup",
             name = "Log Group Messages",
             description = "Send group messages to discord webhook",
             position = 1,
@@ -66,7 +66,7 @@ public interface DiscordChatLoggerConfig extends Config{
     String webhookGroup();
 
     @ConfigItem(
-            keyName = "includeGroupName",
+            keyName = "usegroupname",
             name = "Include Group Name",
             description = "Include group name in discord message",
             position = 3,
@@ -85,7 +85,7 @@ public interface DiscordChatLoggerConfig extends Config{
     String friendsChatOptions = "friendsChatOptions";
 
     @ConfigItem(
-            keyName = "logFriendsChat",
+            keyName = "usefriendschat",
             name = "Log Friends Chat Messages",
             description = "Send friends chat messages to discord webhook",
             position = 1,
