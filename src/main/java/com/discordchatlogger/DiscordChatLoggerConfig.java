@@ -85,7 +85,7 @@ public interface DiscordChatLoggerConfig extends Config{
     String friendsChatOptions = "friendsChatOptions";
 
     @ConfigItem(
-            keyName = "usefriendschat",
+            keyName = "usefriendsChat",
             name = "Log Friends Chat Messages",
             description = "Send friends chat messages to discord webhook",
             position = 1,
