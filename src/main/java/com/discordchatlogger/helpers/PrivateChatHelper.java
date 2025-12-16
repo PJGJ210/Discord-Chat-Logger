@@ -27,11 +27,11 @@ public class PrivateChatHelper {
         String playerName = client.getLocalPlayer().getName();
 
         if (chatMessage.getType() == ChatMessageType.PRIVATECHAT && config.logOthers()) {
-            messageAuthor = ChatMessageUtils.getSanitizedSender(chatMessage);
+            messageAuthor = ChatMessageUtils.getSanitizedAuthor(chatMessage);
             messageReceiver = playerName;
         } else if (chatMessage.getType() == ChatMessageType.PRIVATECHATOUT && config.logSelf()) {
-            messageAuthor = ChatMessageUtils.getSanitizedAuthor(chatMessage);
-            messageReceiver = ChatMessageUtils.getSanitizedSender(chatMessage);
+            messageAuthor = playerName;
+            messageReceiver = ChatMessageUtils.getSanitizedAuthor(chatMessage);
         }
 
         if (Strings.isNullOrEmpty(messageAuthor) || Strings.isNullOrEmpty(messageReceiver))

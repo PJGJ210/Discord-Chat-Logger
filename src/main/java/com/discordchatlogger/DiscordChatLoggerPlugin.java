@@ -3,6 +3,7 @@ package com.discordchatlogger;
 import com.discordchatlogger.domain.WebhookBody;
 import com.discordchatlogger.helpers.DiscordHelper;
 import com.discordchatlogger.helpers.FriendsChatHelper;
+import com.discordchatlogger.helpers.GroupChatHelper;
 import com.discordchatlogger.helpers.PrivateChatHelper;
 import com.discordchatlogger.utils.ChatMessageUtils;
 import com.google.inject.Provides;
@@ -26,15 +27,11 @@ import net.runelite.client.util.Text;
 )
 public class DiscordChatLoggerPlugin extends Plugin {
     @Inject
-    private DiscordChatLoggerConfig config;
-    @Inject
-    private Client client;
-    @Inject
-    private DiscordHelper discordHelper;
-    @Inject
     private FriendsChatHelper friendsChatHelper;
     @Inject
     private PrivateChatHelper privateChatHelper;
+    @Inject
+    private GroupChatHelper groupChatHelper;
 
     @Provides
     DiscordChatLoggerConfig provideConfig(ConfigManager configManager)
@@ -47,44 +44,14 @@ public class DiscordChatLoggerPlugin extends Plugin {
         if (chatMessage.getType() == ChatMessageType.GAMEMESSAGE || chatMessage.getType() == ChatMessageType.SPAM) {
             return;
         }
-        String sender = ChatMessageUtils.getSanitizedAuthor(chatMessage);
-        String receiver;
-        String inputMessage = chatMessage.getMessage();
-        String outputMessage = Text.removeTags(inputMessage);
-        if(chatMessage.getType() == ChatMessageType.PRIVATECHATOUT || chatMessage.getType() == ChatMessageType.PRIVATECHAT) {
+
+        if(chatMessage.getType() == ChatMessageType.PRIVATECHATOUT || chatMessage.getType() == ChatMessageType.PRIVATECHAT)
             privateChatHelper.handleChatMessage(chatMessage);
-        }
-        if(chatMessage.getType() == ChatMessageType.CLAN_GIM_CHAT){
-            String groupName = ChatMessageUtils.getSanitizedSender(chatMessage);
-            if (config.logGroupChat()){
-                if((sender.equals(getPlayerName()) && config.logSelf()) || (!sender.equals(getPlayerName()) && config.logOthers())) {
-                    processGroup(outputMessage, sender, groupName, chatMessage.getType());
-                }
-            }
-        }
-        if(chatMessage.getType() == ChatMessageType.FRIENDSCHAT){
+
+        if(chatMessage.getType() == ChatMessageType.CLAN_GIM_CHAT)
+            groupChatHelper.handleChatMessage(chatMessage);
+
+        if(chatMessage.getType() == ChatMessageType.FRIENDSCHAT)
             friendsChatHelper.handleChatMessage(chatMessage);
-        }
-    }
-
-    private String getPlayerName()
-    {
-        return client.getLocalPlayer().getName();
-    }
-
-    private void processGroup(String outputText,String senderName, String groupName, ChatMessageType chatMessageType){
-        WebhookBody webhookBody = new WebhookBody();
-        StringBuilder stringBuilder = new StringBuilder();
-        if (config.includeGroupName())
-        {
-            stringBuilder.append("**[").append(groupName).append("]** ");
-        }
-        if ((senderName.equals(getPlayerName()) && config.includeUsername()) || (!senderName.equals(getPlayerName()) && config.includeOtherUsername()))
-        {
-            stringBuilder.append("**").append(senderName).append("**").append(" : ");
-        }
-        stringBuilder.append(outputText);
-        webhookBody.setContent(stringBuilder.toString());
-        discordHelper.sendWebhookBody(webhookBody, chatMessageType);
     }
 }
