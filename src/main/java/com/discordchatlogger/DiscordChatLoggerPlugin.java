@@ -3,6 +3,7 @@ package com.discordchatlogger;
 import com.discordchatlogger.domain.WebhookBody;
 import com.discordchatlogger.helpers.DiscordHelper;
 import com.discordchatlogger.helpers.FriendsChatHelper;
+import com.discordchatlogger.helpers.PrivateChatHelper;
 import com.discordchatlogger.utils.ChatMessageUtils;
 import com.google.inject.Provides;
 
@@ -32,6 +33,8 @@ public class DiscordChatLoggerPlugin extends Plugin {
     private DiscordHelper discordHelper;
     @Inject
     private FriendsChatHelper friendsChatHelper;
+    @Inject
+    private PrivateChatHelper privateChatHelper;
 
     @Provides
     DiscordChatLoggerConfig provideConfig(ConfigManager configManager)
@@ -49,17 +52,7 @@ public class DiscordChatLoggerPlugin extends Plugin {
         String inputMessage = chatMessage.getMessage();
         String outputMessage = Text.removeTags(inputMessage);
         if(chatMessage.getType() == ChatMessageType.PRIVATECHATOUT || chatMessage.getType() == ChatMessageType.PRIVATECHAT) {
-            if (config.logPrivateChat()) {
-                if (chatMessage.getType() == ChatMessageType.PRIVATECHATOUT && config.logSelf()){
-                    receiver = sender;
-                    sender = getPlayerName();
-                    processPrivate(outputMessage,sender,receiver, chatMessage.getType());
-                }
-                if (chatMessage.getType() == ChatMessageType.PRIVATECHAT && config.logOthers()){
-                    receiver = getPlayerName();
-                    processPrivate(outputMessage,sender,receiver, chatMessage.getType());
-                }
-            }
+            privateChatHelper.handleChatMessage(chatMessage);
         }
         if(chatMessage.getType() == ChatMessageType.CLAN_GIM_CHAT){
             String groupName = ChatMessageUtils.getSanitizedSender(chatMessage);
@@ -77,22 +70,6 @@ public class DiscordChatLoggerPlugin extends Plugin {
     private String getPlayerName()
     {
         return client.getLocalPlayer().getName();
-    }
-
-    private void processPrivate(String outputText,String senderName, String receiverName, ChatMessageType chatMessageType){
-        WebhookBody webhookBody = new WebhookBody();
-        StringBuilder stringBuilder = new StringBuilder();
-        if(config.includeOtherUsername()) {
-            if (senderName.equals(getPlayerName())) {
-                stringBuilder.append("To **").append(receiverName).append("**").append(" : ");
-            }
-            if (receiverName.equals(getPlayerName())) {
-                stringBuilder.append("From **").append(senderName).append("**").append(" : ");
-            }
-        }
-        stringBuilder.append(outputText);
-        webhookBody.setContent(stringBuilder.toString());
-        discordHelper.sendWebhookBody(webhookBody, chatMessageType);
     }
 
     private void processGroup(String outputText,String senderName, String groupName, ChatMessageType chatMessageType){
