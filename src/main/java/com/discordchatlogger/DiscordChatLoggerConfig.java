@@ -18,12 +18,12 @@ public interface DiscordChatLoggerConfig extends Config{
 
     @ConfigItem(
             keyName = "useprivate",
-            name = "Send Private Messages",
+            name = "Log Private Messages",
             description = "Send private messages to discord webhook",
             position = 1,
             section = privateOptions
     )
-    default boolean usePrivate()
+    default boolean logPrivateChat()
     {
         return false;
     }
@@ -46,12 +46,12 @@ public interface DiscordChatLoggerConfig extends Config{
 
     @ConfigItem(
             keyName = "usegroup",
-            name = "Send Group Messages",
+            name = "Log Group Messages",
             description = "Send group messages to discord webhook",
             position = 1,
             section = groupOptions
     )
-    default boolean useGroup()
+    default boolean logGroupChat()
     {
         return false;
     }
@@ -63,15 +63,16 @@ public interface DiscordChatLoggerConfig extends Config{
             position = 2,
             section = groupOptions
     )
+    String webhookGroup();
 
-    String webhookGroup();    @ConfigItem(
+    @ConfigItem(
             keyName = "usegroupname",
             name = "Include Group Name",
             description = "Include group name in discord message",
             position = 3,
             section = groupOptions
     )
-    default boolean useGroupName()
+    default boolean includeGroupName()
     {
         return true;
     }
@@ -85,15 +86,12 @@ public interface DiscordChatLoggerConfig extends Config{
 
     @ConfigItem(
             keyName = "usefriendsChat",
-            name = "Send friends chat Messages",
+            name = "Log Friends Chat Messages",
             description = "Send friends chat messages to discord webhook",
             position = 1,
             section = friendsChatOptions
     )
-    default boolean usefriendsChat()
-    {
-        return false;
-    }
+    default boolean logFriendsChat() { return false; }
 
     @ConfigItem(
             keyName = "webhookfriendsChat",
@@ -102,15 +100,26 @@ public interface DiscordChatLoggerConfig extends Config{
             position = 2,
             section = friendsChatOptions
     )
-
     String webhookFriendsChat();
+
+    @ConfigItem(
+            keyName = "includeFriendsChatName",
+            name = "Include Friends Chat Name",
+            description = "Include friends chat name in discord message",
+            position = 3,
+            section = friendsChatOptions
+    )
+    default boolean includeFriendsChatName()
+    {
+        return true;
+    }
 
     @ConfigSection(
             name = "Logging",
             description = "General options for logging",
             position = 400
     )
-    String loggingOptions = "logginOptions";
+    String loggingOptions = "loggingOptions";
 
     @ConfigItem(
             keyName = "logself",
