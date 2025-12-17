@@ -10,18 +10,20 @@ import net.runelite.api.events.ChatMessage;
 
 import javax.inject.Inject;
 
-public class PrivateChatHelper {
-    @Inject
-    private DiscordChatLoggerConfig config;
-    @Inject
-    private DiscordHelper discordHelper;
-    @Inject
-    private Client client;
+public class PrivateChatHelper extends ChatHelper {
+    public PrivateChatHelper(Client client, DiscordChatLoggerConfig config, ChatMessage chatMessage) {
+        super(client, config, chatMessage);
+    }
 
-    public void handleChatMessage(ChatMessage chatMessage) {
+    public WebhookBody handleChatMessage(ChatMessage chatMessage) {
         if (!config.logPrivateChat())
-            return;
+            return null;
+        return super.handleChatMessage(chatMessage);
+    }
 
+    @Override
+    protected  String buildPrefix() {
+        StringBuilder stringBuilder = new StringBuilder();
         String messageAuthor = null;
         String messageReceiver = null;
         String playerName = client.getLocalPlayer().getName();
@@ -35,9 +37,8 @@ public class PrivateChatHelper {
         }
 
         if (Strings.isNullOrEmpty(messageAuthor) || Strings.isNullOrEmpty(messageReceiver))
-            return;
+            return null;
 
-        StringBuilder stringBuilder = new StringBuilder();
 
         if(config.includeOtherUsername()) {
             if (messageAuthor.equals(playerName)) {
@@ -47,9 +48,6 @@ public class PrivateChatHelper {
                 stringBuilder.append("From **").append(messageAuthor).append("**").append(" : ");
             }
         }
-
-        stringBuilder.append(ChatMessageUtils.getSanitizedChatContent(chatMessage));
-        WebhookBody webhookBody = new WebhookBody(stringBuilder.toString());
-        discordHelper.sendWebhookBody(webhookBody, chatMessage.getType());
+        return stringBuilder.toString();
     }
 }

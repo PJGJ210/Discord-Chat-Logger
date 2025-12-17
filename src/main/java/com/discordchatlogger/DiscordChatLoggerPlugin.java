@@ -1,13 +1,8 @@
 package com.discordchatlogger;
 
 import com.discordchatlogger.domain.WebhookBody;
-import com.discordchatlogger.helpers.DiscordHelper;
-import com.discordchatlogger.helpers.FriendsChatHelper;
-import com.discordchatlogger.helpers.GroupChatHelper;
-import com.discordchatlogger.helpers.PrivateChatHelper;
-import com.discordchatlogger.utils.ChatMessageUtils;
+import com.discordchatlogger.helpers.*;
 import com.google.inject.Provides;
-
 import net.runelite.api.*;
 
 import javax.inject.Inject;
@@ -26,32 +21,37 @@ import net.runelite.client.util.Text;
         name = "Discord Chat Logger"
 )
 public class DiscordChatLoggerPlugin extends Plugin {
-    @Inject
-    private FriendsChatHelper friendsChatHelper;
-    @Inject
-    private PrivateChatHelper privateChatHelper;
-    @Inject
-    private GroupChatHelper groupChatHelper;
-
     @Provides
     DiscordChatLoggerConfig provideConfig(ConfigManager configManager)
     {
         return configManager.getConfig(DiscordChatLoggerConfig.class);
     }
+    @Inject private Client client;
+    @Inject private DiscordChatLoggerConfig config;
+    @Inject private DiscordHelper discordHelper;
 
     @Subscribe
     public void onChatMessage(ChatMessage chatMessage) {
-        if (chatMessage.getType() == ChatMessageType.GAMEMESSAGE || chatMessage.getType() == ChatMessageType.SPAM) {
+        ChatMessageType chatMessageType = chatMessage.getType();
+        if (chatMessageType == ChatMessageType.GAMEMESSAGE || chatMessageType == ChatMessageType.SPAM) {
             return;
         }
-
-        if(chatMessage.getType() == ChatMessageType.PRIVATECHATOUT || chatMessage.getType() == ChatMessageType.PRIVATECHAT)
-            privateChatHelper.handleChatMessage(chatMessage);
-
-        if(chatMessage.getType() == ChatMessageType.CLAN_GIM_CHAT)
-            groupChatHelper.handleChatMessage(chatMessage);
-
-        if(chatMessage.getType() == ChatMessageType.FRIENDSCHAT)
-            friendsChatHelper.handleChatMessage(chatMessage);
+        ChatHelper chatHelper = null;
+        switch (chatMessageType) {
+            case FRIENDSCHAT:
+                chatHelper = new FriendsChatHelper(client, config, chatMessage);
+                break;
+            case PRIVATECHAT:
+            case PRIVATECHATOUT:
+                chatHelper = new PrivateChatHelper(client, config, chatMessage);
+                break;
+            case CLAN_GIM_CHAT:
+                chatHelper = new GroupChatHelper(client, config, chatMessage);
+        }
+        if (chatHelper == null) {
+            return;
+        }
+        WebhookBody webhookBody = chatHelper.handleChatMessage(chatMessage);
+        discordHelper.sendWebhookBody(webhookBody, chatMessageType);
     }
 }
