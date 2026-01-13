@@ -40,6 +40,8 @@ public class DiscordHelper {
             return config.webhookFriendsChat();
         } else if (chatMessageType == ChatMessageType.CLAN_GIM_CHAT || chatMessageType == ChatMessageType.CLAN_GIM_MESSAGE) {
             return config.webhookGroup();
+        } else if (chatMessageType == ChatMessageType.CLAN_CHAT) {
+            return config.webhookClanChat();
         } else {
             return null;
         }

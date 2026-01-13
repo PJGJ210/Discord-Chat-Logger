@@ -2,6 +2,9 @@ package com.discordchatlogger;
 
 import com.discordchatlogger.domain.WebhookBody;
 import com.discordchatlogger.helpers.*;
+import com.discordchatlogger.helpers.clan.ClanChatHelper;
+import com.discordchatlogger.helpers.group.GroupChatHelper;
+import com.discordchatlogger.helpers.group.GroupMessageHelper;
 import com.google.inject.Provides;
 import net.runelite.api.*;
 
@@ -12,8 +15,6 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-
-import net.runelite.client.util.Text;
 
 
 @Slf4j
@@ -50,6 +51,10 @@ public class DiscordChatLoggerPlugin extends Plugin {
                 break;
             case CLAN_GIM_MESSAGE:
                 chatHelper = new GroupMessageHelper(client, config, chatMessage);
+                break;
+            case CLAN_CHAT:
+                chatHelper = new ClanChatHelper(client, config, chatMessage);
+                break;
         }
         if (chatHelper == null) {
             return;

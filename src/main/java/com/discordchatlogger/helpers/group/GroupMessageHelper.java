@@ -1,12 +1,11 @@
-package com.discordchatlogger.helpers;
+package com.discordchatlogger.helpers.group;
 
 import com.discordchatlogger.DiscordChatLoggerConfig;
 import com.discordchatlogger.domain.WebhookBody;
+import com.discordchatlogger.helpers.ChatHelper;
 import com.discordchatlogger.utils.ChatMessageUtils;
 import net.runelite.api.Client;
 import net.runelite.api.events.ChatMessage;
-
-import javax.inject.Inject;
 
 public class GroupMessageHelper extends ChatHelper {
 
