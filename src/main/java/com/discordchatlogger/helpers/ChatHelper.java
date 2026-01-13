@@ -7,12 +7,11 @@ import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.events.ChatMessage;
 
-import javax.inject.Inject;
-
 public abstract class ChatHelper {
     protected Client client;
     protected DiscordChatLoggerConfig config;
     protected final ChatMessage chatMessage;
+    protected final ChatMessageType chatMessageType;
     protected final String playerName;
     protected final String messageAuthor;
 
@@ -20,25 +19,27 @@ public abstract class ChatHelper {
         this.client = client;
         this.config = config;
         this.chatMessage = chatMessage;
+        this.chatMessageType = chatMessage.getType();
         this.playerName = client.getLocalPlayer().getName();
         this.messageAuthor = ChatMessageUtils.getSanitizedAuthor(chatMessage);
     }
 
     public WebhookBody handleChatMessage(ChatMessage chatMessage) {
-        boolean logMessage = false;
-        if (playerName.equals(messageAuthor) && config.logSelf()) {
-            logMessage = true;
-        } else if (!playerName.equals(messageAuthor) && config.logOthers()) {
-            logMessage = true;
-        }
-
-        if (logMessage) {
+        if (shouldMessageBeLogged()) {
             String stringBuilder = buildPrefix() + buildSuffix();
-            WebhookBody webhookBody = new WebhookBody(stringBuilder);
-            return webhookBody;
+            return new WebhookBody(stringBuilder);
         } else {
             return null;
         }
+    }
+
+    protected boolean shouldMessageBeLogged() {
+        if (playerName.equals(messageAuthor) && config.logSelf()) {
+            return true;
+        } else if (!playerName.equals(messageAuthor) && config.logOthers()) {
+            return true;
+        }
+        return false;
     }
 
     protected String buildPrefix() {

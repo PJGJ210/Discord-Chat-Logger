@@ -36,7 +36,7 @@ public class DiscordChatLoggerPlugin extends Plugin {
         if (chatMessageType == ChatMessageType.GAMEMESSAGE || chatMessageType == ChatMessageType.SPAM) {
             return;
         }
-        ChatHelper chatHelper = null;
+         ChatHelper chatHelper = null;
         switch (chatMessageType) {
             case FRIENDSCHAT:
                 chatHelper = new FriendsChatHelper(client, config, chatMessage);
@@ -47,11 +47,18 @@ public class DiscordChatLoggerPlugin extends Plugin {
                 break;
             case CLAN_GIM_CHAT:
                 chatHelper = new GroupChatHelper(client, config, chatMessage);
+                break;
+            case CLAN_GIM_MESSAGE:
+                chatHelper = new GroupMessageHelper(client, config, chatMessage);
         }
         if (chatHelper == null) {
             return;
         }
+
         WebhookBody webhookBody = chatHelper.handleChatMessage(chatMessage);
+        if (webhookBody == null) {
+            return;
+        }
         discordHelper.sendWebhookBody(webhookBody, chatMessageType);
     }
 }
