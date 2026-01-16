@@ -116,7 +116,7 @@ public interface DiscordChatLoggerConfig extends Config{
 
     @ConfigSection(
             name = "Clan Chat",
-            description = "Options for friends chat message logging",
+            description = "Options for clan chat message logging",
             position = 200
     )
     String clanChatOptions = "clanChatOptions";
