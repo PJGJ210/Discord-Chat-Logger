@@ -115,6 +115,43 @@ public interface DiscordChatLoggerConfig extends Config{
     }
 
     @ConfigSection(
+            name = "Clan Chat",
+            description = "Options for clan chat message logging",
+            position = 200
+    )
+    String clanChatOptions = "clanChatOptions";
+
+    @ConfigItem(
+            keyName = "useClanChat",
+            name = "Log Clan Chat Messages",
+            description = "Send clan chat messages to discord webhook",
+            position = 1,
+            section = clanChatOptions
+    )
+    default boolean logClanChat() { return false; }
+
+    @ConfigItem(
+            keyName = "webhookClanChat",
+            name = "Webhook URL",
+            description = "Send clan chat messages to discord webhook",
+            position = 2,
+            section = clanChatOptions
+    )
+    String webhookClanChat();
+
+    @ConfigItem(
+            keyName = "includeClanChatName",
+            name = "Include Clan Chat Name",
+            description = "Include clan chat name in discord message",
+            position = 3,
+            section = clanChatOptions
+    )
+    default boolean includeClanChatName()
+    {
+        return true;
+    }
+
+    @ConfigSection(
             name = "Logging",
             description = "General options for logging",
             position = 400
