@@ -3,6 +3,7 @@ package com.discordchatlogger;
 import com.discordchatlogger.domain.WebhookBody;
 import com.discordchatlogger.helpers.*;
 import com.discordchatlogger.helpers.clan.ClanChatHelper;
+import com.discordchatlogger.helpers.clan.GuestClanChatHelper;
 import com.discordchatlogger.helpers.group.GroupChatHelper;
 import com.discordchatlogger.helpers.group.GroupMessageHelper;
 import com.google.inject.Provides;
@@ -54,6 +55,9 @@ public class DiscordChatLoggerPlugin extends Plugin {
                 break;
             case CLAN_CHAT:
                 chatHelper = new ClanChatHelper(client, config, chatMessage);
+                break;
+            case CLAN_GUEST_CHAT:
+                chatHelper = new GuestClanChatHelper(client, config, chatMessage);
                 break;
         }
         if (chatHelper == null) {
