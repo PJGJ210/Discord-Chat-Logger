@@ -5,7 +5,10 @@ import net.runelite.client.util.Text;
 
 public class ChatMessageUtils {
     public static String getSanitizedAuthor(ChatMessage chatMessage) {
-        return Text.removeTags(chatMessage.getName()).replaceAll("[^0-9a-zA-Z ]+", " ");
+        return Text
+            .removeTags(chatMessage.getName())
+            .replaceAll("CA_ID:\\d+\\|", "")
+            .replaceAll("[^0-9a-zA-Z ]+", " ");
     }
 
     public static String getSanitizedSender(ChatMessage chatMessage) {
