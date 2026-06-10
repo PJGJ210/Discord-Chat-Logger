@@ -12,7 +12,10 @@ public class ChatMessageUtils {
     }
 
     public static String getSanitizedSender(ChatMessage chatMessage) {
-        return Text.removeTags(chatMessage.getSender()).replaceAll("[^0-9a-zA-Z ]+", " ");
+        return Text
+            .removeTags(chatMessage.getSender())
+            .replaceAll("CA_ID:\\d+\\|", "")
+            .replaceAll("[^0-9a-zA-Z ]+", " ");
     }
 
     public static String getSanitizedChatContent(ChatMessage chatMessage) {
