@@ -8,8 +8,6 @@ import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.events.ChatMessage;
 
-import javax.inject.Inject;
-
 public class PrivateChatHelper extends ChatHelper {
     public PrivateChatHelper(Client client, DiscordChatLoggerConfig config, ChatMessage chatMessage) {
         super(client, config, chatMessage);
@@ -27,11 +25,12 @@ public class PrivateChatHelper extends ChatHelper {
         String messageAuthor = null;
         String messageReceiver = null;
         String playerName = client.getLocalPlayer().getName();
+		ChatMessageType type = chatMessage.getType();
 
-        if (chatMessage.getType() == ChatMessageType.PRIVATECHAT && config.logOthers()) {
+        if ((type == ChatMessageType.PRIVATECHAT || type == ChatMessageType.MODPRIVATECHAT) && config.logOthers()) {
             messageAuthor = ChatMessageUtils.getSanitizedAuthor(chatMessage);
             messageReceiver = playerName;
-        } else if (chatMessage.getType() == ChatMessageType.PRIVATECHATOUT && config.logSelf()) {
+        } else if (type == ChatMessageType.PRIVATECHATOUT && config.logSelf()) {
             messageAuthor = playerName;
             messageReceiver = ChatMessageUtils.getSanitizedAuthor(chatMessage);
         }
